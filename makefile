@@ -20,6 +20,12 @@ update:
 	@sudo rm -r Easy-Linux-File-Transfer-ELFT-/
 	@make all
 
+install $(EXECUTABLE):
+	sudo cp elft /usr/bin/
+
+uninstall /usr/bin/elft:
+	sudo rm /usr/bin/elft
+
 clean: $(EXECUTABLE)
 	@rm $(EXECUTABLE)
 
