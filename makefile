@@ -13,7 +13,12 @@ $(SRCS):
 
 update:
 	@echo "Pulling latest update from repo"
-	#@rm $(SRCS)
+	@rm $(SRCS)
+	@rm $(EXECUTABLE)
+	@git clone https://www.github.com/rootieDev/Easy-Linux-File-Transfer-ELFT-
+	@sudo mv Easy-Linux-File-Transfer-ELFT-/* .
+	@sudo rm -r Easy-Linux-File-Transfer-ELFT-/
+	@make all
 
 clean: $(EXECUTABLE)
 	@rm $(EXECUTABLE)
