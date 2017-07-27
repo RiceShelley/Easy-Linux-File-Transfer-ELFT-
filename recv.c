@@ -14,6 +14,35 @@ int write_chunk(int fd, char *chunk)
 	return 0;
 }
 
+int display_loading_bar(int p) 
+{
+	char l_bar[33];
+	memset(l_bar, ' ', 33);
+	l_bar[0] = '[';
+	l_bar[31] = ']';
+	l_bar[32] = '\0';
+	static int old_p = 0;
+	// print loading bar
+	if (p != old_p) {
+
+		// -1 = file done downloading
+		if (p == -1) {
+			for (int i = 0; i < 30; i++)
+				l_bar[i + 1] = '#';
+			printf("\r%s DONE.\n", l_bar);
+			return 0;
+		}
+
+		for (int i = 0; i < (int) (((double) p / 100.0) * 30.0); i++)
+			l_bar[i + 1] = '#';
+
+		printf("\r%s %d%%", l_bar, p);
+		fflush(stdout);
+		old_p = p;
+	}
+	return 0;
+}
+
 int get_file(const char *ip, int port, char *name) 
 {
 	printf("port %d\n", port);
@@ -73,12 +102,6 @@ int get_file(const char *ip, int port, char *name)
 
 	puts("Downloading from server...");
 
-	char l_bar[103];
-	l_bar[0] = '[';
-	l_bar[101] = ']';
-	l_bar[102] = '\0';
-	int old_lbar = 0;
-
 	int out_f = open(name, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR);
 
 	for (int i = 0; i < sect + 1; i++) {
@@ -102,10 +125,7 @@ int get_file(const char *ip, int port, char *name)
 		char *d_start = (char *) memmem((const void *) buff, (size_t) SECT_SIZE, (const void *) &"<SOT>", (size_t) 5);
 		char *d_end = (char *) memmem((const void *) buff, (size_t) SECT_SIZE, (const void *) &"<EOT>", (size_t) 5);	
 		if (d_start == NULL || d_end == NULL) {
-			for (int i = 0; i < 100; i++) {
-				l_bar[i + 1] = '#';
-			}
-			printf("\r%s Done.\n", l_bar);
+			display_loading_bar(-1);
 			if (strncmp(buff, "END", 3) == 0) {
 				puts("found end");
 				break;
@@ -120,20 +140,7 @@ int get_file(const char *ip, int port, char *name)
 			continue;
 		}
 		
-		// print loading bar
-		int lb_l = (int) (((double) i / (double) sect) * 100.0);
-		if (lb_l != old_lbar) {
-			for (int i = 0; i < 100; i++) {
-				if (i < lb_l + 1) {
-					l_bar[i + 1] = '#';
-				} else {
-					l_bar[i + 1] = ' ';
-				}
-			}
-			printf("\r%s %d%%", l_bar, lb_l);
-			fflush(stdout);
-			old_lbar = lb_l;
-		}
+		display_loading_bar((int) (((double) i / (double) sect) * 100.0));
 		
 		// write chunk to file
 		write_chunk(out_f, buff);

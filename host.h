@@ -12,7 +12,7 @@
 #include <sys/stat.h>
 #include <string.h>
 
-#define CHUNK_LEN 8192
+#define CHUNK_LEN 1024
 
 // defined in main.c
 unsigned char check_sum(char *chunk, size_t len);

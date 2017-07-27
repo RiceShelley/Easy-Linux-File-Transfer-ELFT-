@@ -34,9 +34,8 @@ int host_file_mode(int argc, char *argv[]) {
 
 int main(int argc, char *argv[])
 {
-	printf("%d\n", argc);
 	if (argc < 2) {
-		puts("*Error* -> run elfs -help for help");
+		puts("* Error * -> run elfs -help for help");
 		return 0;
 	}
 

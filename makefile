@@ -21,10 +21,10 @@ update:
 	@make all
 
 install $(EXECUTABLE):
-	sudo cp elft /usr/bin/
+	sudo cp elft /usr/local/bin/
 
 uninstall /usr/bin/elft:
-	sudo rm /usr/bin/elft
+	sudo rm /usr/local/bin/elft
 
 clean: $(EXECUTABLE)
 	@rm $(EXECUTABLE)

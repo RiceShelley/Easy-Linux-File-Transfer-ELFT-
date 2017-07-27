@@ -13,7 +13,7 @@
 #include <fcntl.h>
 #include <netdb.h>
 
-#define SECT_SIZE 8192
+#define SECT_SIZE 1024
 
 // defined in main.c
 unsigned char check_sum(char *chunk, size_t len);
