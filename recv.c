@@ -95,14 +95,12 @@ int get_file(const char *ip, int port, char *name)
 		// request a chunk
 		sprintf(buff, "GET %d\n", i);
 		if (sendto(fd, buff, strlen(buff), 0, (struct sockaddr *) &s_addr, slen) == -1) {
-			printf("failed to request chunk\n");
 			i--;
 			continue;
 		}
 
 		// recv chunk	
 		if (recvfrom(fd, buff, SECT_SIZE, 0, (struct sockaddr *) &s_addr, &slen) == -1) {
-			printf("failed to recv chunk\n");
 			i--;
 			continue;
 		}	
@@ -111,7 +109,6 @@ int get_file(const char *ip, int port, char *name)
 			break;
 		
 		if (check_sum(buff, SECT_SIZE) != 0) {
-			printf("FAILED CHECK SUM TEST!!! ON -> %d\n", i);
 			i--;
 			continue;
 		}
