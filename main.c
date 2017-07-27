@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
 		puts("Invalid use try \"elft --help\"");
 		return -1;
 	}
-	if (strcmp(argv[1], "-g") == 0 && argc == 4)
+	if (strcmp(argv[1], "-g") == 0 && argc > 3)
 		recv_file_mode(argc, argv);
 	else if (strcmp(argv[1], "-h") == 0 && argc == 3)
 		host_file_mode(argc, argv);	

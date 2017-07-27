@@ -70,13 +70,13 @@ int get_file(const char *ip, int port, char *name)
 	// request info about file
 	char *message = "FILE_INFO\0";
 	if(sendto(fd, message, strlen(message), 0, (struct sockaddr *) &s_addr, slen) == -1) {
-		printf("failed to send msg");
+		printf("failed to send msg\n");
 		return -1;
 	}
 
 	memset(buff, '\0', SECT_SIZE);	
 	if(recvfrom(fd, buff, SECT_SIZE, 0, (struct sockaddr *) &s_addr, &slen) == -1) {
-		printf("failed to recv data");		
+		printf("failed to recv data\n");		
 		return -1;
 	}
 
