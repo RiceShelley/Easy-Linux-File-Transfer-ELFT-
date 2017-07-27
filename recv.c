@@ -14,6 +14,21 @@ int write_chunk(int fd, char *chunk)
 	return 0;
 }
 
+int resolve_ip(char *hostname, char *ip) 
+{
+	struct hostent *he;
+	struct in_addr *addr;
+
+	if ((he = gethostbyname(hostname)) == NULL) 
+		return 1;
+
+	if ((addr = (struct in_addr *) he->h_addr_list[0]) == NULL)
+		return 1;
+
+	strcpy(ip, inet_ntoa(*addr));
+	return 0;
+}
+
 int display_loading_bar(int p) 
 {
 	char l_bar[33];
@@ -63,14 +78,14 @@ int get_file(const char *ip, int port, char *name)
 	s_addr.sin_family = AF_INET;
 	s_addr.sin_port = htons(port);
 
-	struct hostent *hPtr;
-	hPtr = gethostbyname(ip);
+	char ip_from_hname[100];
+	if (resolve_ip((char *) ip, ip_from_hname) != 0)
+		printf("failed to resolve hostname\n");
 
-	printf("addr %s\n", hPtr->h_addr);
+	printf("%s\n", ip_from_hname);	
 
-	if (inet_aton(ip, &s_addr.sin_addr) == 0) {
+	if (inet_aton(ip_from_hname, &s_addr.sin_addr) == 0)
 		printf("inet_aton() failed\n");
-	}
 
 	struct timeval tv;
 	tv.tv_sec = 1;
