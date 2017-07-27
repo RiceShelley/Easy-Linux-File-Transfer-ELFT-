@@ -16,6 +16,7 @@
 
 // defined in main.c
 unsigned char check_sum(char *chunk, size_t len);
+int display_loading_bar(int p);
 
 char **file;
 int file_len;

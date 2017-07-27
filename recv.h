@@ -17,6 +17,7 @@
 
 // defined in main.c
 unsigned char check_sum(char *chunk, size_t len);
+int display_loading_bar(int p);
 
 int write_file(const char *name, char **file, int sect);
 int get_file(const char *ip, int port, char *name);

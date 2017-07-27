@@ -63,16 +63,15 @@ int send_file(int port)
 		if (strncmp(chunk, "GET ", 4) == 0) {
 			sect = atoi(strtok(&chunk[4], "\n"));
 			if (sect < 0 || sect > file_len + 1) {
-				printf("Invalid section request '%d'\n", sect);
 				continue;
 			}
-		} else if (strncmp(chunk, "CLOSE", 5) == 0) {
-			puts("Client done downloading file.");
+		} else if (strncmp(chunk, "CLOSE", 5) == 0)
 			break;
-		}
 		
 		sendto(fd, &(*file[sect]), CHUNK_LEN, 0, (struct sockaddr *) &o_addr, slen);
+		display_loading_bar((int) (((double) sect / (double) file_len) * 100.0));
 	}
+	display_loading_bar(-1);
 	close(fd);
 	return 0;
 }
@@ -99,7 +98,6 @@ int load_file(char *path)
 	const int chunks = st.st_size / (CHUNK_LEN - 42);
 
 	file = (char **) malloc(chunks * sizeof(char **));
-	printf("chunks %d\n", chunks);
 
 	int pos = 0;
 
@@ -108,7 +106,7 @@ int load_file(char *path)
 		memset(chunk, '\0', CHUNK_LEN);
 
 		// Chunk format -> "Section:(Sect number)<SOT>(File Data)<EOT>"
-		sprintf(chunk, "%s:%d<SOT>\0", "Section", pos);
+		sprintf(chunk, "%s:%d<SOT>", "Section", pos);
 		// NOTE: check sum value is going to be stored after <EOT>
 		const char *eot = "<EOT> \0";
 

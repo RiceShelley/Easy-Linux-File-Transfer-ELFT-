@@ -29,41 +29,13 @@ int resolve_ip(char *hostname, char *ip)
 	return 0;
 }
 
-int display_loading_bar(int p) 
-{
-	char l_bar[33];
-	memset(l_bar, ' ', 33);
-	l_bar[0] = '[';
-	l_bar[31] = ']';
-	l_bar[32] = '\0';
-	static int old_p = 0;
-	// print loading bar
-	if (p != old_p) {
-
-		// -1 = file done downloading
-		if (p == -1) {
-			for (int i = 0; i < 30; i++)
-				l_bar[i + 1] = '#';
-			printf("\r%s DONE.\n", l_bar);
-			return 0;
-		}
-
-		for (int i = 0; i < (int) (((double) p / 100.0) * 30.0); i++)
-			l_bar[i + 1] = '#';
-
-		printf("\r%s %d%%", l_bar, p);
-		fflush(stdout);
-		old_p = p;
-	}
-	return 0;
-}
-
 int get_file(const char *ip, int port, char *name) 
 {
-	printf("port %d\n", port);
-
-	if (name == NULL)
+	
+	if (name == NULL) {
+		puts("No file name specified (Defaulting to \"unnamed\")");
 		name = "unnamed";	
+	}
 	
 	struct sockaddr_in s_addr;
 	int fd, slen = sizeof(s_addr);
@@ -82,7 +54,7 @@ int get_file(const char *ip, int port, char *name)
 	if (resolve_ip((char *) ip, ip_from_hname) != 0)
 		printf("failed to resolve hostname\n");
 
-	printf("%s\n", ip_from_hname);	
+	printf("Connected to\t->\t%s:%d\n", ip_from_hname, port);	
 
 	if (inet_aton(ip_from_hname, &s_addr.sin_addr) == 0)
 		printf("inet_aton() failed\n");
@@ -113,9 +85,8 @@ int get_file(const char *ip, int port, char *name)
 	info[0] = strtok(buff, " ");
 	info[1] = strtok(NULL, " \n");
 	int sect = atoi(info[1]);
-	printf("sect %d\n", sect);
 
-	puts("Downloading from server...");
+	puts("Downloading file...");
 
 	int out_f = open(name, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR);
 
@@ -136,19 +107,9 @@ int get_file(const char *ip, int port, char *name)
 			continue;
 		}	
 
-		// make sure chunk isnt corrupt
-		char *d_start = (char *) memmem((const void *) buff, (size_t) SECT_SIZE, (const void *) &"<SOT>", (size_t) 5);
-		char *d_end = (char *) memmem((const void *) buff, (size_t) SECT_SIZE, (const void *) &"<EOT>", (size_t) 5);	
-		if (d_start == NULL || d_end == NULL) {
-			display_loading_bar(-1);
-			if (strncmp(buff, "END", 3) == 0) {
-				puts("found end");
-				break;
-			}
-			i--;
-			continue;
-		}
-
+		if (strncmp(buff, "END", 3) == 0)
+			break;
+		
 		if (check_sum(buff, SECT_SIZE) != 0) {
 			printf("FAILED CHECK SUM TEST!!! ON -> %d\n", i);
 			i--;
@@ -160,7 +121,7 @@ int get_file(const char *ip, int port, char *name)
 		// write chunk to file
 		write_chunk(out_f, buff);
 	}
-
+	display_loading_bar(-1);
 	close(out_f);
 	strcpy(buff, "CLOSE");
 	if (sendto(fd, buff, strlen(buff), 0, (struct sockaddr *) &s_addr, slen) == -1) {
