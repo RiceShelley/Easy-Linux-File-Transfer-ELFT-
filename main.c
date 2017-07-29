@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
 	}
 	if (strcmp(argv[1], "-g") == 0 && argc > 3)
 		recv_file_mode(argc, argv);
-	else if (strcmp(argv[1], "-h") == 0 && argc == 3)
+	else if (strcmp(argv[1], "-h") == 0 && argc > 2)
 		host_file_mode(argc, argv);	
 	else if (strcmp(argv[1], "--help") == 0) {
 		puts("Options:");
