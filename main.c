@@ -28,7 +28,7 @@ int display_loading_bar(int p)
                 if (p == -1) {
                         for (int i = 0; i < 30; i++)
                                 l_bar[i + 1] = '#';
-                        printf("\r%s DONE.\n", l_bar);
+                        printf("\r%s %d%%    DONE.\n", l_bar, 100);
                         return 0;
                 }
 

@@ -1,5 +1,14 @@
 #include "host.h"
 
+int free_mem()
+{
+	for (int i = 0; i < file_len; i++) {
+		free(file[i]);
+	}
+	free(file);
+	return 0;
+}
+
 int send_file(int port)
 {
 	struct sockaddr_in s_addr, o_addr;
@@ -73,6 +82,7 @@ int send_file(int port)
 	}
 	display_loading_bar(-1);
 	close(fd);
+	free_mem();
 	return 0;
 }
 
